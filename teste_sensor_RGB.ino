@@ -11,6 +11,7 @@ const int freqPWM = 5000;
 const int resolucaoPWM = 8;
 
 int velocidadeMotor = 150;
+int presenca = 100;
 
 //definição do pino do servo moto
 const int pinoServo = 13;
@@ -55,22 +56,35 @@ void loop() {
   uint16_t r, g, b, c;
   tcs.getRawData(&r, &g, &b, &c);
 
+
   Serial.printf("Luminosidade (C): "); Serial.print(c);
   Serial.print(" | Vermelho: "); Serial.print(r);
- e Serial.print(" | Verde: "); Serial.print(g);
+  Serial.print(" | Verde: "); Serial.print(g);
   Serial.print(" | Azul: "); Serial.print(b);
-  
+
   //sistema de controle do servo motor
-  if (r > g && r > b){
-    Serial.println("PEÇA VERMELHA DETECTADA");
-    servo1.write(22.5);
-  }else if (g > b && g > b){
-      Serial.println("PEÇA VERDE DETECTADA");
-      servo1.write(67.5);
-  }else if(b > g && b > r){
-      Serial.println("PEÇA AZUL DETECTADA");
-      servo1.write(0);
+  if(c > presenca){
+    ledcWrite(pinoENA, 0);//motor para ao detectar uma peça
+    delay(100);//delay para que o motor pare totalmente
+
+    if (r > g && r > b){
+      Serial.println("PEÇA VERMELHA DETECTADA");
+      servo1.write(22.5);
+    }else if (g > b && g > b){
+        Serial.println("PEÇA VERDE DETECTADA");
+        servo1.write(67.5);
+    }else if(b > g && b > r){
+        Serial.println("PEÇA AZUL DETECTADA");
+        servo1.write(0);
+    }
+    delay(100);//delay para que o servo consiga trocar a posição totalmente
+
+    ledcWrite(pinoServo, velocidadeMotor);
+    delay(2000);//tempo para descartar uma peça
+
+  }else{
+    ledcWrite(pinoServo, velocidadeMotor);//motor segue normalmente
   }
 
-  delay(100);
+  delay(100);//delay para não sobrecarregar o sistema
 }
