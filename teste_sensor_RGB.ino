@@ -12,7 +12,7 @@ const int resolucaoPWM = 8;
 
 int velocidadeMotor = 150;
 
-//definição do pino do servo motor
+//definição do pino do servo moto
 const int pinoServo = 13;
 
 //definição do servo motor com o nome de servo1
