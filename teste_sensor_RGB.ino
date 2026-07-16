@@ -3,15 +3,15 @@
 #include "Adafruit_TCS34725.h"
 
 //definição dos pinos e parametros do motor DC
-//const int pinoENA = 25;
+const int pinoENA = 25;
 const int pinoIN1 = 26;
 const int pinoIN2 = 27;
 
 const int freqPWM = 5000;
 const int resolucaoPWM = 8;
-
 int velocidadeMotor = 150;
-int presenca = 100;//definição do limiar de presença para a parada do motor
+
+int presenca = 600;//definição do limiar de presença para a parada do motor
 
 //definição do pino do servo moto
 const int pinoServo = 13;
@@ -26,18 +26,22 @@ void setup() {
   Serial.begin(115200);
 
   //inicialização dos pinos do  motor
-  pinMode(pinoIN1, OUTPUT);
-  ledcAttach(pinoIN2, freqPWM, resolucaoPWM);
+  
+  //pinMode(pinoIN1, OUTPUT);
+  //ledcAttach(pinoIN2, freqPWM, resolucaoPWM);
 
-  //pinMode(pinoIN2, OUTPUT);
-  //ledcAttach(pinoENA, freqPWM, resolucaoPWM);
+  pinMode(pinoIN1, OUTPUT);
+  pinMode(pinoIN2, OUTPUT);
+  ledcAttach(pinoENA, freqPWM, resolucaoPWM);
 
   //inicialização da velocidade do motor
-  digitalWrite(pinoIN1, LOW);
-  ledcWrite(pinoIN2, velocidadeMotor);
+  
+  //digitalWrite(pinoIN1, LOW);
+  //ledcWrite(pinoIN2, velocidadeMotor);
 
-  //digitalWrite(pinoIN2, LOW);
-  //ledcWrite(pinoENA, velocidadeMotor);
+  digitalWrite(pinoIN1, HIGH);
+  digitalWrite(pinoIN2, LOW);
+  ledcWrite(pinoENA, velocidadeMotor);
   
 
   //inicialização do servo motor
@@ -62,15 +66,19 @@ void loop() {
 
 
   Serial.printf("Luminosidade (C): "); Serial.print(c);
+  Serial.printf("\n");
   Serial.print(" | Vermelho: "); Serial.print(r);
+  Serial.printf("\n");
   Serial.print(" | Verde: "); Serial.print(g);
+  Serial.printf("\n");
   Serial.print(" | Azul: "); Serial.print(b);
+  Serial.printf("\n");
 
   //sistema de controle do servo motor
   if(c > presenca){
-    //ledcWrite(pinoENA, 0);
-
-    ledcWrite(pinoIN2, 0);//motor para ao detectar uma peça
+    
+    ledcWrite(pinoENA, 0);
+    //ledcWrite(pinoIN2, 0);//motor para ao detectar uma peça
     delay(100);//delay para que o motor pare totalmente
 
     if (r > g && r > b){
@@ -85,15 +93,13 @@ void loop() {
     }
     delay(1500);//delay para que o servo consiga trocar a posição totalmente
 
-    //ledcWrite(pinoENA, velocidadeMotor);
-
-    ledcWrite(pinoIN2, velocidadeMotor);
+    ledcWrite(pinoENA, velocidadeMotor);
+    //ledcWrite(pinoIN2, velocidadeMotor);
     delay(2000);//tempo para descartar uma peça
 
   }else{
-    //ledcWrite(pinoENA, velocidadeMotor);
-    
-    ledcWrite(pinoIN2, velocidadeMotor);//motor segue normalmente
+    ledcWrite(pinoENA, velocidadeMotor);
+    //ledcWrite(pinoIN2, velocidadeMotor);//motor segue normalmente
   }
 
   delay(100);//delay para não sobrecarregar o sistema
