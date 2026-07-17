@@ -9,9 +9,9 @@ const int pinoIN2 = 27;
 
 const int freqPWM = 5000;
 const int resolucaoPWM = 8;
-int velocidadeMotor = 150;
+int velocidadeMotor = 255;
 
-int presenca = 600;//definição do limiar de presença para a parada do motor
+int presenca = 200;//definição do limiar de presença para a parada do motor
 
 //definição do pino do servo moto
 const int pinoServo = 13;
@@ -20,7 +20,7 @@ const int pinoServo = 13;
 Servo servo1;
 
 //definição do sensor de cor(tcs) com o tempo de resposta a 50ms com um "ganho de cor" definido a 4x(para um abmiente com luminosidade neutra)
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_16X);
 
 void setup() {
   Serial.begin(115200);
@@ -60,6 +60,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(servo1.read());
   //leitura dos dados brutos do sensor
   uint16_t r, g, b, c;
   tcs.getRawData(&r, &g, &b, &c);
@@ -83,14 +84,14 @@ void loop() {
 
     if (r > g && r > b){
       Serial.println("PEÇA VERMELHA DETECTADA");
-      servo1.write(22);
+      servo1.write(10);
     }else if (g > b && g > r){
         Serial.println("PEÇA VERDE DETECTADA");
         servo1.write(67);
-    }else if(b > g && b > r){
-        Serial.println("PEÇA AZUL DETECTADA");
-        servo1.write(0);
-    }
+    }//else if(b > (g) && b > r){
+     //   Serial.println("PEÇA AZUL DETECTADA");
+     //   servo1.write(0);
+    //}
     delay(1500);//delay para que o servo consiga trocar a posição totalmente
 
     ledcWrite(pinoENA, velocidadeMotor);
@@ -102,5 +103,5 @@ void loop() {
     //ledcWrite(pinoIN2, velocidadeMotor);//motor segue normalmente
   }
 
-  delay(100);//delay para não sobrecarregar o sistema
+  delay(200);//delay para não sobrecarregar o sistema
 }
